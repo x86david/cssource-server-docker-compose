@@ -12,7 +12,7 @@ for arg in "$@"; do
 done
 
 echo "===================================================="
-echo "   CS:Source Server Deployment Script               "
+echo "    CS:Source Server Deployment Script              "
 echo "===================================================="
 
 if [ "$CLEAN_INSTALL" = true ]; then
@@ -105,12 +105,20 @@ EOF
 
 # 4. Create default server configuration if it doesn't already exist
 if [ ! -f cstrike-cfg/server.cfg ]; then
-    echo "[4/5] Creating default server configuration file..."
+    echo "[4/5] Creating default server configuration file with Bots & RCON..."
     cat << 'EOF' > cstrike-cfg/server.cfg
 // --- Counter-Strike: Source Server Config ---
 hostname "My Community CS:Source Server"
 rcon_password "change_this_rcon_password"
 sv_password ""
+
+// --- Bot Configuration ---
+bot_quota 10
+bot_quota_mode fill
+bot_difficulty 1
+bot_chatter normal
+bot_join_after_player 0
+bot_defer_to_human 1
 
 // Gameplay Settings
 mp_timelimit 25
@@ -142,7 +150,7 @@ fi
 
 # 5. Build and launch container
 echo "[5/5] Building image and starting container..."
-docker compose build
+docker compose build --no-cache
 docker compose up -d
 
 echo "==================================================+"
